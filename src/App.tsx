@@ -1,5 +1,3 @@
-//import React from 'react';
-
 import React, {Component} from "react";
 import Question from "./components/Question";
 import background from "./images/demonSlayer.jpg";
@@ -12,6 +10,7 @@ interface AppState {
   questions: Quote[]
   allAnime: string[]
   isOver: boolean
+  lastScore: number
 }
 
 interface Quote {
@@ -30,8 +29,9 @@ class App extends Component<{}, AppState> {
     this.state = {
       questions: arr,
       allAnime: [],
-      isOver: true
-    };
+      isOver: true,
+      lastScore: -1
+    }
   }
 
 
@@ -42,7 +42,6 @@ class App extends Component<{}, AppState> {
         alert("Bad response from API from trying to fetch anime")
       }
       let anime: string[] = await response.json() as string[]
-      console.log(anime)
 
       this.setState({
         allAnime: anime
@@ -65,7 +64,6 @@ class App extends Component<{}, AppState> {
         return
       }
       let quotes: Quote[] = await response.json() as Quote[]
-      console.log(quotes)
 
       this.setState({
         questions: quotes,
@@ -77,30 +75,28 @@ class App extends Component<{}, AppState> {
     }
   }
 
-  setGameOver = () => {
+  setGameOver = (score: number) => {
     this.setState({
-      isOver: true
+      isOver: true,
+      lastScore: score
     })
   }
-
-
 
   render() {
     return (
       <div className="App">
-        <p>Hello.</p>
+        {this.state.lastScore !== -1 && this.state.isOver ? (
+          <p>Final Score: {this.state.lastScore}</p>
+        ) : (
+          null
+        )}
         {this.state.isOver ? (
           <button onClick={this.startQuiz}>Start</button>
         ) : (
-          null
-        )}
-        {!this.state.isOver ? (
           <Question quotes={this.state.questions} allAnime={this.state.allAnime} onGameOver={this.setGameOver}/>
-        ) : (
-          null
         )}
       </div>
-    );
+    )
   }
 }
 
