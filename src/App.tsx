@@ -1,6 +1,8 @@
 import React, {Component} from "react";
 import Question from "./components/Question";
 import background from "./images/demonSlayer.jpg";
+import GlobalStyle from "./App-style"
+import StyledButton from "./Question-style"
 
 //anime
 //character
@@ -84,14 +86,18 @@ class App extends Component<{}, AppState> {
 
   render() {
     return (
-      <div className="App">
+      <div className="App" style={{display: 'flex', flexDirection: 'column', alignItems:'center', height: '100vh'}}>
+      <GlobalStyle/>
+        <h1>Anime Quote Quiz</h1>
         {this.state.lastScore !== -1 && this.state.isOver ? (
+        <>
           <p>Final Score: {this.state.lastScore}</p>
+        </>
         ) : (
           null
         )}
         {this.state.isOver ? (
-          <button onClick={this.startQuiz}>Start</button>
+          <StyledButton onClick={this.startQuiz}>Start</StyledButton>
         ) : (
           <Question quotes={this.state.questions} allAnime={this.state.allAnime} onGameOver={this.setGameOver}/>
         )}

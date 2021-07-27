@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import { runInThisContext } from "vm";
+import StyledButton from "../Question-style";
 
 interface QuestionProps {
     quotes: Quote[]
@@ -36,7 +36,8 @@ class Question extends Component<QuestionProps, QuestionState> {
     }
 
     checkAnswer = (event: any) => {
-        let clickID: number = +event.target.id
+        let target = event.target
+        let clickID: number = +target.id
         
         //if correct answer
         if(this.state.options[clickID] === this.props.quotes[this.state.questionNumber].anime) {
@@ -44,7 +45,7 @@ class Question extends Component<QuestionProps, QuestionState> {
             this.setState({
                 numCorrect: newNumCorrect,
             })
-        }
+        } 
         this.setState({
             showAnswer: true
         })
@@ -93,23 +94,27 @@ class Question extends Component<QuestionProps, QuestionState> {
     render() {
         if(this.state.questionNumber < 10) {
             return (
-                <div id="Question">
-                    <p>Quote:</p>
+                <div style={{display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center'}}>
+                    <p>Question {this.state.questionNumber+1}/10</p>
+                    <b>Quote:</b>
+                    
                     <p>{this.props.quotes[this.state.questionNumber].quote}</p>
+                    
                     {this.state.showAnswer ? (
                     <>
                         <p>Correct Answer: {this.props.quotes[this.state.questionNumber].anime}</p>
-                        <button onClick={this.nextQuestion}>Next</button>
+                        <StyledButton onClick={this.nextQuestion}>Next</StyledButton>
                     </>
                     ) : (
-                    <>
-                        <button id='0' onClick={this.checkAnswer}>{this.state.options[0]}</button>
-                        <button id='1' onClick={this.checkAnswer}>{this.state.options[1]}</button>
-                        <button id='2' onClick={this.checkAnswer}>{this.state.options[2]}</button>
-                        <button id='3' onClick={this.checkAnswer}>{this.state.options[3]}</button>
-                    </>
+                    <div>
+                        <StyledButton id='0' onClick={this.checkAnswer}>{this.state.options[0]}</StyledButton>
+                        <StyledButton id='1' onClick={this.checkAnswer}>{this.state.options[1]}</StyledButton>
+                        <br/>
+                        <StyledButton id='2' onClick={this.checkAnswer}>{this.state.options[2]}</StyledButton>
+                        <StyledButton id='3' onClick={this.checkAnswer}>{this.state.options[3]}</StyledButton>
+                    </div>
                     )}
-                    <p>Number correct: {this.state.numCorrect}</p>
+                    <b>Number Correct: {this.state.numCorrect}</b>
                 </div>
             )
         } else {
