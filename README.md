@@ -1,4 +1,4 @@
-WIP web app. Currently in a very bad but playable state.
+WIP web app. Currently in playable state.
 
 Quiz with 10 quotes from various anime and JRPGs.
 Correctly identify the show/game the quotes come from to get points.
