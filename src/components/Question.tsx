@@ -11,7 +11,9 @@ interface QuestionState {
     questionNumber: number
     options: string[]
     numCorrect: number
+    correctIndex: number
     showAnswer: boolean
+    buttonColors: [boolean, boolean][]
 }
 
 interface Quote {
@@ -20,6 +22,8 @@ interface Quote {
     quote: string
 }
 
+//const allWhite: [boolean, boolean][] = [[false, false], [false, false], [false, false], [false, false]]
+
 class Question extends Component<QuestionProps, QuestionState> {
     constructor (props: QuestionProps) {
         super(props)
@@ -27,44 +31,14 @@ class Question extends Component<QuestionProps, QuestionState> {
             questionNumber: 0,
             options: [],
             numCorrect: 0,
-            showAnswer: false
+            correctIndex: 0,
+            showAnswer: false,
+            buttonColors: [[false, false], [false, false], [false, false], [false, false]]
         }
     }
 
     componentDidMount() {
         this.generateOptions()
-    }
-
-    checkAnswer = (event: any) => {
-        let target = event.target
-        let clickID: number = +target.id
-        
-        //if correct answer
-        if(this.state.options[clickID] === this.props.quotes[this.state.questionNumber].anime) {
-            let newNumCorrect = this.state.numCorrect + 1
-            this.setState({
-                numCorrect: newNumCorrect,
-            })
-        } 
-        this.setState({
-            showAnswer: true
-        })
-    }
-
-    nextQuestion = () => {
-
-        let nextNumber = this.state.questionNumber + 1
-        this.setState({
-            questionNumber: nextNumber
-        }, () => {
-            if(this.state.questionNumber < 10) {
-                this.generateOptions()
-            } 
-            else { 
-                //let the parent know the game is over
-                this.props.onGameOver(this.state.numCorrect)
-            }
-        })
     }
 
     generateOptions = () => {
@@ -87,34 +61,80 @@ class Question extends Component<QuestionProps, QuestionState> {
         }
         this.setState({
             options: arr,
-            showAnswer: false
+            showAnswer: false,
+            correctIndex: arr.indexOf(ans)
+        })
+    }
+
+    checkAnswer = (event: any) => {
+        let target = event.target
+        let clickID: number = +target.id
+        
+        //if correct answer
+        if(this.state.options[clickID] === this.props.quotes[this.state.questionNumber].anime) {
+            let newNumCorrect = this.state.numCorrect + 1
+            let old = this.state.buttonColors
+            old[clickID] = [true, true]
+            this.setState({
+                numCorrect: newNumCorrect,
+                buttonColors: old
+            })
+        } 
+        else {
+            let old = this.state.buttonColors
+            old[clickID] = [true, false]
+            old[this.state.correctIndex] = [true, true]
+        }
+        this.setState({
+            showAnswer: true
+        })
+
+    }
+
+    nextQuestion = () => {
+        let nextNumber = this.state.questionNumber + 1
+        this.setState({
+            questionNumber: nextNumber,
+            buttonColors: [[false, false], [false, false], [false, false], [false, false]]
+        }, () => {
+            if(this.state.questionNumber < 10) {
+                this.generateOptions()
+            } 
+            else { //game over
+                this.props.onGameOver(this.state.numCorrect)
+            }
         })
     }
 
     render() {
+        let buttonColors = this.state.buttonColors
+        
         if(this.state.questionNumber < 10) {
             return (
                 <div style={{display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center'}}>
-                    <p>Question {this.state.questionNumber+1}/10</p>
+                    <b>Question {this.state.questionNumber+1}/10</b>
+                    <br/>
+                    <b>Number Correct: {this.state.numCorrect}</b>
+                    <br/>
                     <b>Quote:</b>
                     
                     <p>{this.props.quotes[this.state.questionNumber].quote}</p>
                     
+                    <div>
+                        <StyledButton answered={buttonColors[0][0]} correct={buttonColors[0][1]} id='0' onClick={this.checkAnswer} disabled={this.state.showAnswer}>{this.state.options[0]}</StyledButton>
+                        <StyledButton answered={buttonColors[1][0]} correct={buttonColors[1][1]} id='1' onClick={this.checkAnswer} disabled={this.state.showAnswer}>{this.state.options[1]}</StyledButton>
+                        <br/>
+                        <StyledButton answered={buttonColors[2][0]} correct={buttonColors[2][1]} id='2' onClick={this.checkAnswer} disabled={this.state.showAnswer}>{this.state.options[2]}</StyledButton>
+                        <StyledButton answered={buttonColors[3][0]} correct={buttonColors[3][1]} id='3' onClick={this.checkAnswer} disabled={this.state.showAnswer}>{this.state.options[3]}</StyledButton>
+                    </div>
                     {this.state.showAnswer ? (
                     <>
-                        <p>Correct Answer: {this.props.quotes[this.state.questionNumber].anime}</p>
-                        <StyledButton onClick={this.nextQuestion}>Next</StyledButton>
+                        <StyledButton small onClick={this.nextQuestion}>Next</StyledButton>
                     </>
                     ) : (
-                    <div>
-                        <StyledButton id='0' onClick={this.checkAnswer}>{this.state.options[0]}</StyledButton>
-                        <StyledButton id='1' onClick={this.checkAnswer}>{this.state.options[1]}</StyledButton>
-                        <br/>
-                        <StyledButton id='2' onClick={this.checkAnswer}>{this.state.options[2]}</StyledButton>
-                        <StyledButton id='3' onClick={this.checkAnswer}>{this.state.options[3]}</StyledButton>
-                    </div>
+                        null
                     )}
-                    <b>Number Correct: {this.state.numCorrect}</b>
+                    
                 </div>
             )
         } else {

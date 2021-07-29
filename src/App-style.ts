@@ -1,11 +1,9 @@
-// globalStyles.js
 import { createGlobalStyle } from 'styled-components';
 
- 
 const GlobalStyle = createGlobalStyle`
     body {
-        margin-right: 250px;
-        margin-left: 250px;
+        margin-right: 400px;
+        margin-left: 400px;
         height: 100%;
         padding: 0;
         background: pink;

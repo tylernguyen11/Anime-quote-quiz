@@ -97,7 +97,7 @@ class App extends Component<{}, AppState> {
           null
         )}
         {this.state.isOver ? (
-          <StyledButton onClick={this.startQuiz}>Start</StyledButton>
+          <StyledButton small onClick={this.startQuiz}>Start</StyledButton>
         ) : (
           <Question quotes={this.state.questions} allAnime={this.state.allAnime} onGameOver={this.setGameOver}/>
         )}
